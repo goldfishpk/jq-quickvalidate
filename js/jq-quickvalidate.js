@@ -170,22 +170,15 @@
 
         // Placeholder support
         (function (i) {
-            var supportPlaceholder = (function () {
-                var el = document.createElement('input');
-                return 'placeholder' in el;
-            }());
-            if (!supportPlaceholder) {
+            if (!('placeholder' in $('<input>')[0])) {
                 i.each(function () {
-                    var $this = $(this);
-                    $this.val($this.attr('placeholder'));
+                    $(this).val($(this).attr('placeholder'));
                 }).on({
                     focus: function () {
-                        var $this = $(this);
-                        this.value === $this.attr('placeholder') && $this.val('');
+                        this.value === $(this).attr('placeholder') && $(this).val('');
                     },
                     blur: function () {
-                        var $this = $(this);
-                        !$this.val() && $this.val($this.attr('placeholder'));
+                        $(this).val() || $(this).val($(this).attr('placeholder'));
                     }
                 });
             }
