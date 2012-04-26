@@ -15,8 +15,9 @@
 <form id="my-form">
     <p><label>Username <span>*</span>:</label><input name="username" type="text"/></p>
     <p><label>Password <span>*</span>:</label><input name="pass" type="password"/></p>
-    <p><label>E-Mail <span>*</span>:</label><input name="email" type="text"/></p>
-    <p><label>Date <span>*</span>:</label><input name="date" type="text"/></p>
+    <p><label>Random:</label><input name="random" type="text"/></p>
+    <p><label>E-Mail:</label><input name="email" type="text"/></p>
+    <p><label>Date:</label><input name="date" type="text" placeholder="mm/dd/yy"/></p>
     <p><label>&nbsp;</label><button type="submit">Submit</button></p>
     <div style="clear: both;"></div>
 </form>
@@ -30,8 +31,10 @@
     $form.quickValidate({
         inputs: {
             'username': {
-                filters: 'required username istaken',
-                data: ['Paul']
+                filters: 'required username exclude',
+                data: {
+                    exclude: ['Paul', 'Mike']
+                }
             },
             'pass': {
                 filters: 'required pass'
@@ -41,6 +44,13 @@
             },
             'date': {
                 filters: 'date'
+            },
+            'random': {
+                filters: 'min max',
+                data: {
+                    min: 3,
+                    max: 10
+                }
             }
         }
     });

@@ -47,20 +47,11 @@
             
 /* --------------------------------------------------------
 
-    getUserObj
-
--------------------------------------------------------- */
-            
-        var getUserObj = function($input){
-            return o.inputs[$input.attr('name')];
-        };
-            
-/* --------------------------------------------------------
-
     Default filters:
 
     * ie. <input type="text" class="required username"></input>
     * input will match filter name `username`
+    * regex: function (userInputObj, value) { ... }
 
 -------------------------------------------------------- */
 
@@ -101,8 +92,20 @@
                 regex: /^(?:(ftp|http|https):\/\/)?(?:[\w\-]+\.)+[a-z]{3,6}$/i,
                 error: 'Must be a valid URL. (e.g. www.google.com)'
             },
+            min: {
+                regex: function(ui, value) {
+                    this.error = 'Must be at least ' + ui.data.min + ' characters long.';
+                    return value.length > ui.data.min - 1;
+                }
+            },
+            max: {
+                regex: function(ui, value) {
+                    this.error = ui.data.max + ' characters max.';
+                    return value.length <= ui.data.max;
+                }
+            },
             date: {
-                regex: function (userInput, value) {
+                regex: function (ui, value) {
                     var match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value),
                         isDate = function (m, d, y) {
                             return m > 0 && m < 13 && y > 0 && y < 32768 && d > 0 && d <= (new Date(y, m, 0)).getDate();
@@ -111,10 +114,10 @@
                 },
                 error: 'Must be a valid date. (e.g. mm/dd/yyyy)'
             },
-            istaken: {
-                regex: function (userInput, value) {
+            exclude: {
+                regex: function (ui, value) {
                     this.error = '"'+ value + '" is not available.';
-                    return !~$.inArray(value, userInput.data);
+                    return !~$.inArray(value, ui.data.exclude);
                 }
             }
         };
@@ -126,7 +129,7 @@
 
     Validate(data, value):
 
-    * userInput: @obj containing user defined input properties
+    * userInput: object containing user defined input properties
     * value: the value of the given input
 
 -------------------------------------------------------- */
@@ -169,8 +172,8 @@
 -------------------------------------------------------- */
 
         var analyze = function ($input) {
-            var userInput = getUserObj($input),
-                value = $input.val(),
+            var userInput = o.inputs[$input.attr('name')],
+                value = $input.val() === $input.attr('placeholder') ? '' : $input.val(),
                 test = validate(userInput, value),
                 $error = $input.siblings('.error'),
                 $icon = $input.siblings('.valid-icon');
@@ -196,38 +199,26 @@
 -------------------------------------------------------- */
 
         // Placeholder support
-        (function (i) {
-            if (!('placeholder' in $('<input>')[0])) {
-                i.each(function () {
-                    $(this).val($(this).attr('placeholder'));
-                }).on({
-                    focus: function () {
-                        this.value === $(this).attr('placeholder') && $(this).val('');
-                    },
-                    blur: function () {
-                        $(this).val() || $(this).val($(this).attr('placeholder'));
-                    }
-                });
-            }
-        }($inputs));
+        if (!('placeholder' in $('<input>')[0])) {
+            $inputs.each(function () {
+                $(this).val($(this).attr('placeholder'));
+            }).on({
+                focus: function () {
+                    this.value === $(this).attr('placeholder') && $(this).val('');
+                },
+                blur: function () {
+                    $(this).val() || $(this).val($(this).attr('placeholder'));
+                }
+            });
+        }
 
         $inputs.each(function () {
-            var $this = $(this);
-            $('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($this);
-            if (/required/.test(getUserObj($this).filters)) {
-                analyze($this);
-            }
-        }).on({
-            keyup: function () {
-                analyze($(this));
-            },
-            focus: function(){
-                analyze($(this));
-            },
-            blur: function(){
-                analyze($(this));
-            }
-        }).eq(0).focus(); // Focus first field
+            $(this).attr('autocomplete', 'off');
+        	$('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($(this));
+        	analyze($(this));
+        }).on('keyup focus blur', function () {
+        	analyze($(this));
+        }).blur();
         
         $form.submit(function (e) {
             if ($form.find('input.invalid').length) {
