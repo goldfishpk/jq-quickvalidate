@@ -10,11 +10,21 @@
 (function ($) {
 
     'use strict';
+    
+    // Polyfill Object.keys()
+    var getKeys = function (obj) {
+        var keys = [], key;
+        for (key in obj) {
+            keys.push(key);
+        }
+        return keys;
+    };
 
     $.fn.quickValidate = function (ops) {
 
         // Default options
         var o = $.extend({
+            inputs: {},
             onSuccess: function () {
                 alert('Thank you...');
             },
@@ -34,8 +44,12 @@
         // Cache variables
         var $form = this,
             // Only process these elements
-            $inputs = $form.find('input:text, input:password');
-
+            $inputs = $('[name="'+ getKeys(o.inputs).join('"], [name="') +'"]');
+            
+        var getUserObj = function($input){
+            return o.inputs[$input.attr('name')];
+        };
+            
 /* --------------------------------------------------------
 
     Default filters:
@@ -83,7 +97,7 @@
                 error: 'Must be a valid URL. (e.g. www.google.com)'
             },
             date: {
-                regex: function (value) {
+                regex: function (obj, value) {
                     var match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value),
                         isDate = function (m, d, y) {
                             return m > 0 && m < 13 && y > 0 && y < 32768 && d > 0 && d <= (new Date(y, m, 0)).getDate();
@@ -93,11 +107,10 @@
                 error: 'Must be a valid date. (e.g. mm/dd/yyyy)'
             },
             istaken: {
-                regex: function (value, params) {
-                    this.error = 'The ' + params[1] + ' "' + value + '" is already taken.';
-                    return !~$.inArray(value, eval(params[0]));
-                },
-                error: ''
+                regex: function (obj, value) {
+                    this.error = '"'+ value + '" is not available.';
+                    return !~$.inArray(value, obj.data);
+                }
             }
         };
 
@@ -113,9 +126,10 @@
 
 -------------------------------------------------------- */
 
-        var validate = function (data, value) {
+        var validate = function (obj, value) {
             var isValid = true,
-                error = '';
+                error = '',
+                data = obj.filters;
             if (!value && /required/.test(data)) {
                 error = 'This field is required.';
                 isValid = false;
@@ -123,21 +137,15 @@
             if (value) {
                 data = data.split(/\s/);
                 $.each(data, function (i, d) {
-                    // Find filters like `inarray(arr)`
-                    var params = [];
-                    if (/\W+/.test(d)) {
-                        params = /\((.+)\)/.exec(d)[1].split('|');
-                        d = d.replace(/\(.+\)/, '');
-                    }
                     if (filters[d]) {
                         if (
-                            typeof filters[d].regex === 'function' && !filters[d].regex(value, params) || 
+                            typeof filters[d].regex === 'function' && !filters[d].regex(obj, value) || 
                             filters[d].regex instanceof RegExp && !filters[d].regex.test(value)
                         ) {
                             isValid = false;
-                            error = filters[d].error;
+                            error = obj.error ? obj.error : filters[d].error;
+                            return false;
                         }
-                        return false;
                     }
                 });
             }
@@ -156,9 +164,9 @@
 -------------------------------------------------------- */
 
         var analyze = function ($input) {
-            var data = $input.data('qval'),
+            var obj = getUserObj($input),
                 value = $input.val(),
-                test = validate(data, value),
+                test = validate(obj, value),
                 $error = $('<span class="error">' + test.error + '</span>'),
                 $info = $('<i class="error-icon"></i>'),
                 $ok = $('<i class="valid-icon"></i>');
@@ -199,7 +207,7 @@
 
         $inputs.each(function () {
             var $this = $(this);
-            if (/required/.test($this.data('qval'))) {
+            if (/required/.test(getUserObj($this).filters)) {
                 analyze($this);
             }
         }).on({

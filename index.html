@@ -13,12 +13,10 @@
 <h2>A small and extensible jQuery validation plugin</h2>
 
 <form id="my-form">
-    <p><label>Name <span>*</span>:</label><input type="text" data-qval="required name"/></p>
-    <p><label>Password <span>*</span>:</label><input type="password" data-qval="required pass"/></p>
-    <p><label>E-Mail:</label><input type="text" data-qval="email"/></p>
-    <p><label>Phone:</label><input type="text" data-qval="phone" placeholder="000-000-0000"/></p>
-    <p><label>Date:</label><input type="text" data-qval="date" placeholder="mm/dd/yyyy"/></p>
-    <p><label>Website:</label><input type="text" data-qval="istaken(ids|user)"/></p>
+    <p><label>Username <span>*</span>:</label><input name="name" type="text"/></p>
+    <p><label>Password <span>*</span>:</label><input name="pass" type="password"/></p>
+    <p><label>E-Mail <span>*</span>:</label><input name="email" type="text"/></p>
+    <p><label>Date <span>*</span>:</label><input name="date" type="text"/></p>
     <p><label>&nbsp;</label><button type="submit">Submit</button></p>
     <div style="clear: both;"></div>
 </form>
@@ -26,23 +24,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="js/jq-quickvalidate.js"></script>
 <script>
-    var ids = ['one', 'two'];
+
     var $form = $('#my-form');
+
     $form.quickValidate({
-        onSubmit: function(){
-            var message = 'Please review the form again, there are some fields that don\'t validate. Make sure to fill in all required inputs.';
-            $form.siblings('.invalid-submit').remove();
-            $('<p class="invalid-submit">'+ message +'<span class="close-icon"></span></p>').find('.close-icon').click(function(){
-                $(this).parent().remove();
-            }).end().insertAfter($form);
-        },
-        filters: {
-            custom: {
-                regex: /hello world/i,
-                error: 'Must be "hello world".'
+        inputs: {
+            'name': {
+                filters: 'required name istaken',
+                data: ['Paul']
+            },
+            'pass': {
+                filters: 'required pass'
+            },
+            'email': {
+                filters: 'email'
+            },
+            'date': {
+                filters: 'date'
             }
         }
     });
+    
 </script>
 
 </body>
