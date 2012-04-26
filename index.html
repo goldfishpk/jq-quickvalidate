@@ -13,19 +13,20 @@
 <h2>A small and extensible jQuery validation plugin</h2>
 
 <form id="my-form">
-    <p><label>Name <span>*</span>:</label><input type="text" class="required name"/></p>
-    <p><label>Password <span>*</span>:</label><input type="password" class="required pass"/></p>
-    <p><label>E-Mail:</label><input type="text" class="email"/></p>
-    <p><label>Phone:</label><input type="text" class="phone" placeholder="000-000-0000"/></p>
-    <p><label>Date:</label><input type="text" class="date" placeholder="mm/dd/yyyy"/></p>
-    <p><label>Website:</label><input type="text" class="url"/></p>
+    <p><label>Name <span>*</span>:</label><input type="text" data-qval="required name"/></p>
+    <p><label>Password <span>*</span>:</label><input type="password" data-qval="required pass"/></p>
+    <p><label>E-Mail:</label><input type="text" data-qval="email"/></p>
+    <p><label>Phone:</label><input type="text" data-qval="phone" placeholder="000-000-0000"/></p>
+    <p><label>Date:</label><input type="text" data-qval="date" placeholder="mm/dd/yyyy"/></p>
+    <p><label>Website:</label><input type="text" data-qval="istaken(ids|user)"/></p>
     <p><label>&nbsp;</label><button type="submit">Submit</button></p>
     <div style="clear: both;"></div>
 </form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script src="js/jq-quickvalidate-min.js"></script>
+<script src="js/jq-quickvalidate.js"></script>
 <script>
+    var ids = ['one', 'two'];
     var $form = $('#my-form');
     $form.quickValidate({
         onSubmit: function(){

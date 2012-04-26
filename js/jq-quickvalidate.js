@@ -91,6 +91,13 @@
                     return match && isDate(match[1], match[2], match[3]);
                 },
                 error: 'Must be a valid date. (e.g. mm/dd/yyyy)'
+            },
+            istaken: {
+                regex: function (value, params) {
+                    this.error = 'The ' + params[1] + ' "' + value + '" is already taken.';
+                    return !~$.inArray(value, eval(params[0]));
+                },
+                error: ''
             }
         };
 
@@ -99,30 +106,36 @@
 
 /* --------------------------------------------------------
 
-    Validate(klass, value):
+    Validate(data, value):
 
-    * klass: a string containg all classes of a given input
+    * data: a string containg all classes of a given input
     * value: the value of the given input
 
 -------------------------------------------------------- */
 
-        var validate = function (klass, value) {
+        var validate = function (data, value) {
             var isValid = true,
                 error = '';
-            if (!value && /required/.test(klass)) {
+            if (!value && /required/.test(data)) {
                 error = 'This field is required.';
                 isValid = false;
             }
             if (value) {
-                klass = klass.split(/\s/);
-                $.each(klass, function (i, k) {
-                    if (filters[k]) {
+                data = data.split(/\s/);
+                $.each(data, function (i, d) {
+                    // Find filters like `inarray(arr)`
+                    var params = [];
+                    if (/\W+/.test(d)) {
+                        params = /\((.+)\)/.exec(d)[1].split('|');
+                        d = d.replace(/\(.+\)/, '');
+                    }
+                    if (filters[d]) {
                         if (
-                            typeof filters[k].regex === 'function' && !filters[k].regex(value) || 
-                            filters[k].regex instanceof RegExp && !filters[k].regex.test(value)
+                            typeof filters[d].regex === 'function' && !filters[d].regex(value, params) || 
+                            filters[d].regex instanceof RegExp && !filters[d].regex.test(value)
                         ) {
                             isValid = false;
-                            error = filters[k].error;
+                            error = filters[d].error;
                         }
                         return false;
                     }
@@ -143,9 +156,9 @@
 -------------------------------------------------------- */
 
         var analyze = function ($input) {
-            var klass = $input.attr('class'),
+            var data = $input.data('qval'),
                 value = $input.val(),
-                test = validate(klass, value),
+                test = validate(data, value),
                 $error = $('<span class="error">' + test.error + '</span>'),
                 $info = $('<i class="error-icon"></i>'),
                 $ok = $('<i class="valid-icon"></i>');
@@ -186,7 +199,7 @@
 
         $inputs.each(function () {
             var $this = $(this);
-            if ($this.is('.required')) {
+            if (/required/.test($this.data('qval'))) {
                 analyze($this);
             }
         }).on({
