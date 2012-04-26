@@ -9,20 +9,17 @@
 -------------------------------------------------------- */
 
 (function ($) {
-
     'use strict';
-    
     // Polyfill Object.keys()
     var getKeys = function (obj) {
-        var keys = [], key;
+        var keys = [],
+            key;
         for (key in obj) {
             keys.push(key);
         }
         return keys;
     };
-
     $.fn.quickValidate = function (ops) {
-
         // Default options
         var o = $.extend({
             inputs: {},
@@ -39,11 +36,10 @@
                 // ie. myfilter: { regex: /something/, error: 'My error' }
             }
         }, ops);
-
         // Cache variables
         var $form = this,
             // Only process these elements
-            $inputs = $('[name="'+ getKeys(o.inputs).join('"], [name="') +'"]');
+            $inputs = $('[name="' + getKeys(o.inputs).join('"], [name="') + '"]');
             
 /* --------------------------------------------------------
 
@@ -93,13 +89,13 @@
                 error: 'Must be a valid URL. (e.g. www.google.com)'
             },
             min: {
-                regex: function(ui, value) {
+                regex: function (ui, value) {
                     this.error = 'Must be at least ' + ui.data.min + ' characters long.';
                     return value.length > ui.data.min - 1;
                 }
             },
             max: {
-                regex: function(ui, value) {
+                regex: function (ui, value) {
                     this.error = ui.data.max + ' characters max.';
                     return value.length <= ui.data.max;
                 }
@@ -116,15 +112,14 @@
             },
             exclude: {
                 regex: function (ui, value) {
-                    this.error = '"'+ value + '" is not available.';
+                    this.error = '"' + value + '" is not available.';
                     return !~$.inArray(value, ui.data.exclude);
                 }
             }
         };
-
         // Merge custom and default filters
         $.extend(true, filters, o.filters);
-
+        
 /* --------------------------------------------------------
 
     Validate(data, value):
@@ -162,7 +157,7 @@
                 error: error
             };
         };
-
+        
 /* --------------------------------------------------------
 
     Analyze($input):
@@ -182,16 +177,16 @@
             if (!test.isValid) {
                 $input.addClass('invalid');
                 $error.css({
-                    right: - ($error.outerWidth()),
+                    right: -($error.outerWidth()),
                     top: $input.outerHeight() / 2
                 }).text(test.error).show();
             }
             if (value && test.isValid) {
                 $error.hide();
                 $icon.show();
-            }
+            }            
         };
-
+        
 /* --------------------------------------------------------
 
     Events:
@@ -211,15 +206,13 @@
                 }
             });
         }
-
         $inputs.each(function () {
             $(this).attr('autocomplete', 'off');
-        	$('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($(this));
-        	analyze($(this));
+            $('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($(this));
+            analyze($(this));
         }).on('keyup focus blur', function () {
-        	analyze($(this));
+            analyze($(this));
         }).blur();
-        
         $form.submit(function (e) {
             if ($form.find('input.invalid').length) {
                 e.preventDefault();
