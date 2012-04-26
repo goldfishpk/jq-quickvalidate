@@ -7,6 +7,7 @@
     * Website: https://github.com/elclanrs/jq-quickvalidate
 
 -------------------------------------------------------- */
+
 (function ($) {
 
     'use strict';
@@ -36,15 +37,19 @@
             filters: {
                 // Add your own filters
                 // ie. myfilter: { regex: /something/, error: 'My error' }
-            },
-            speed: 'fast', // Popup fadeIn speed
-            easing: 'swing' // Popup fadeIn easing
+            }
         }, ops);
 
         // Cache variables
         var $form = this,
             // Only process these elements
             $inputs = $('[name="'+ getKeys(o.inputs).join('"], [name="') +'"]');
+            
+/* --------------------------------------------------------
+
+    getUserObj
+
+-------------------------------------------------------- */
             
         var getUserObj = function($input){
             return o.inputs[$input.attr('name')];
@@ -97,7 +102,7 @@
                 error: 'Must be a valid URL. (e.g. www.google.com)'
             },
             date: {
-                regex: function (obj, value) {
+                regex: function (userInput, value) {
                     var match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value),
                         isDate = function (m, d, y) {
                             return m > 0 && m < 13 && y > 0 && y < 32768 && d > 0 && d <= (new Date(y, m, 0)).getDate();
@@ -107,9 +112,9 @@
                 error: 'Must be a valid date. (e.g. mm/dd/yyyy)'
             },
             istaken: {
-                regex: function (obj, value) {
+                regex: function (userInput, value) {
                     this.error = '"'+ value + '" is not available.';
-                    return !~$.inArray(value, obj.data);
+                    return !~$.inArray(value, userInput.data);
                 }
             }
         };
@@ -121,29 +126,29 @@
 
     Validate(data, value):
 
-    * data: a string containg all classes of a given input
+    * userInput: @obj containing user defined input properties
     * value: the value of the given input
 
 -------------------------------------------------------- */
 
-        var validate = function (obj, value) {
+        var validate = function (userInput, value) {
             var isValid = true,
                 error = '',
-                data = obj.filters;
-            if (!value && /required/.test(data)) {
+                userFilters = userInput.filters;
+            if (!value && /required/.test(userFilters)) {
                 error = 'This field is required.';
                 isValid = false;
             }
             if (value) {
-                data = data.split(/\s/);
-                $.each(data, function (i, d) {
+                userFilters = userFilters.split(/\s/);
+                $.each(userFilters, function (i, d) {
                     if (filters[d]) {
                         if (
-                            typeof filters[d].regex === 'function' && !filters[d].regex(obj, value) || 
+                            typeof filters[d].regex === 'function' && !filters[d].regex(userInput, value) || 
                             filters[d].regex instanceof RegExp && !filters[d].regex.test(value)
                         ) {
                             isValid = false;
-                            error = obj.error ? obj.error : filters[d].error;
+                            error = userInput.error || filters[d].error;
                             return false;
                         }
                     }
@@ -164,22 +169,23 @@
 -------------------------------------------------------- */
 
         var analyze = function ($input) {
-            var obj = getUserObj($input),
+            var userInput = getUserObj($input),
                 value = $input.val(),
-                test = validate(obj, value),
-                $error = $('<span class="error">' + test.error + '</span>'),
-                $info = $('<i class="error-icon"></i>'),
-                $ok = $('<i class="valid-icon"></i>');
-            $info.hover(function () {
-                $(this).siblings('.error').stop(1, 1).fadeToggle(o.speed, o.easing);
-            });
-            $input.removeClass('invalid').siblings('.error, .error-icon, .valid-icon').remove();
+                test = validate(userInput, value),
+                $error = $input.siblings('.error'),
+                $icon = $input.siblings('.valid-icon');
+            $input.removeClass('invalid');
+            $form.find('.error').add($icon).hide();
             if (!test.isValid) {
                 $input.addClass('invalid');
-                $error.add($info).insertAfter($input);
+                $error.css({
+                    right: - ($error.outerWidth()),
+                    top: $input.outerHeight() / 2
+                }).text(test.error).show();
             }
             if (value && test.isValid) {
-                $ok.insertAfter($input);
+                $error.hide();
+                $icon.show();
             }
         };
 
@@ -207,14 +213,22 @@
 
         $inputs.each(function () {
             var $this = $(this);
+            $('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($this);
             if (/required/.test(getUserObj($this).filters)) {
                 analyze($this);
             }
         }).on({
             keyup: function () {
                 analyze($(this));
+            },
+            focus: function(){
+                analyze($(this));
+            },
+            blur: function(){
+                analyze($(this));
             }
-        });
+        }).eq(0).focus(); // Focus first field
+        
         $form.submit(function (e) {
             if ($form.find('input.invalid').length) {
                 e.preventDefault();

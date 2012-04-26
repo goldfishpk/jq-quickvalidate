@@ -26,8 +26,7 @@
     width: 200px;
     border: 1px solid #ccc;
 }
-#my-form .valid-icon,
-#my-form .error-icon {
+#my-form .valid-icon {
     position: absolute;
     top: 4px;
     right: -24px;
@@ -39,23 +38,19 @@
     background: url(../img/ok.png) no-repeat;
     cursor: default;
 }
-#my-form .error-icon {
-    background: url(../img/info.png) no-repeat;
-}
 #my-form input.invalid {
     background: #FFFAC4;
 }
 #my-form .error {
-    display: none;
     position: absolute;
-    top: 10px;
-    right: -185px;
+    margin-right: -20px; /* adjust according to arrow */
     z-index: 999;
-    padding: 10px;
+    padding: .8em 1.2em;
     width: 120px;
     font-size: 12px;
     background: #222;
     color: white;
+    border-radius: 0 3px 3px 3px;
 }
 #my-form .error:after { /* Popup arrow */
     content: "";

@@ -13,7 +13,7 @@
 <h2>A small and extensible jQuery validation plugin</h2>
 
 <form id="my-form">
-    <p><label>Username <span>*</span>:</label><input name="name" type="text"/></p>
+    <p><label>Username <span>*</span>:</label><input name="username" type="text"/></p>
     <p><label>Password <span>*</span>:</label><input name="pass" type="password"/></p>
     <p><label>E-Mail <span>*</span>:</label><input name="email" type="text"/></p>
     <p><label>Date <span>*</span>:</label><input name="date" type="text"/></p>
@@ -29,8 +29,8 @@
 
     $form.quickValidate({
         inputs: {
-            'name': {
-                filters: 'required name istaken',
+            'username': {
+                filters: 'required username istaken',
                 data: ['Paul']
             },
             'pass': {
