@@ -1,6 +1,6 @@
 /* --------------------------------------------------------
 
-    jq-quickvalidate 1.1
+    jq-quickvalidate 1.2
 
     * Author: Cedric Ruiz
     * License: GPLv2
