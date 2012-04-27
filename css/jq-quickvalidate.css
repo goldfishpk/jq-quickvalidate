@@ -25,25 +25,34 @@
     line-height: 24px;
     width: 200px;
     border: 1px solid #ccc;
+    outline: 0;
 }
-#my-form .valid-icon {
+#my-form .valid-icon,
+#my-form .invalid-icon {
     position: absolute;
     top: 4px;
     right: -24px;
     height: 16px;
     width: 16px;
-    cursor: pointer;
 }
 #my-form .valid-icon {
-    background: url(../img/ok.png) no-repeat;
-    cursor: default;
+    background: url(../img/valid.png) no-repeat;
+}
+#my-form .invalid-icon {
+    background: url(../img/invalid.png) no-repeat;
+    cursor: pointer;
 }
 #my-form input.invalid {
     background: #FFFAC4;
+    color: #3B392A;
+}
+#my-form input.valid {
+    background: #E9F7D7;
+    color: #3A5911;
 }
 #my-form .error {
     position: absolute;
-    margin-right: -20px; /* adjust according to arrow */
+    margin-right: -40px;
     z-index: 999;
     padding: .8em 1.2em;
     width: 120px;
@@ -52,7 +61,7 @@
     color: white;
     border-radius: 0 3px 3px 3px;
 }
-#my-form .error:after { /* Popup arrow */
+#my-form .error:after {
     content: "";
     position: absolute;
     top: 0;

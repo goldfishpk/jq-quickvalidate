@@ -10,15 +10,16 @@
 
 (function ($) {
     'use strict';
-    // Polyfill Object.keys()
-    var getKeys = function (obj) {
-        var keys = [],
-            key;
+    
+    // `Object.keys` polyfill
+    var getKeys = Object.keys || function (obj) { 
+        var keys = [], key = '';
         for (key in obj) {
-            keys.push(key);
+            obj.hasOwnProperty(key) && keys.push(key);
         }
         return keys;
     };
+    
     $.fn.quickValidate = function (ops) {
         // Default options
         var o = $.extend({
@@ -38,7 +39,7 @@
         }, ops);
         // Cache variables
         var $form = this,
-            // Only process these elements
+            // Grab user defined inputs
             $inputs = $('[name="' + getKeys(o.inputs).join('"], [name="') + '"]');
             
 /* --------------------------------------------------------
@@ -55,6 +56,10 @@
             number: {
                 regex: /\d+/,
                 error: 'Must be a number.'
+            },
+            digits: {
+                regex: /^\d+$/,
+                error: 'Must be only digits.'
             },
             name: {
                 regex: /^[A-Za-z]{3,}$/,
@@ -74,19 +79,19 @@
             },
             email: {
                 regex: /^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/,
-                error: 'Must be a valid e-mail address. (e.g. user@gmail.com)'
+                error: 'Must be a valid e-mail address. <em>(e.g. user@gmail.com)</em>'
             },
             phone: {
                 regex: /^[2-9]\d{2}-\d{3}-\d{4}$/,
-                error: 'Must be a valid US phone number. (e.g. 555-123-4567)'
+                error: 'Must be a valid US phone number. <em>(e.g. 555-123-4567)</em>'
             },
             zip: {
                 regex: /^\d{5}$|^\d{5}-\d{4}$/,
-                error: 'Must be a valid US zip code. (e.g. 33245 or 33245-0003)'
+                error: 'Must be a valid US zip code. <em>(e.g. 33245 or 33245-0003)</em>'
             },
             url: {
                 regex: /^(?:(ftp|http|https):\/\/)?(?:[\w\-]+\.)+[a-z]{3,6}$/i,
-                error: 'Must be a valid URL. (e.g. www.google.com)'
+                error: 'Must be a valid URL. <em>(e.g. www.google.com)</em>'
             },
             min: {
                 regex: function (ui, value) {
@@ -108,7 +113,7 @@
                         };
                     return match && isDate(match[1], match[2], match[3]);
                 },
-                error: 'Must be a valid date. (e.g. mm/dd/yyyy)'
+                error: 'Must be a valid date. <em>(e.g. mm/dd/yyyy)</em>'
             },
             exclude: {
                 regex: function (ui, value) {
@@ -133,20 +138,26 @@
             var isValid = true,
                 error = '',
                 userFilters = userInput.filters;
+                
+                // console.log(userInput.errors);
             if (!value && /required/.test(userFilters)) {
-                error = 'This field is required.';
+                if (userInput.errors && userInput.errors.required) {
+                    error = userInput.errors.required;
+                } else {
+                    error = 'This field is required.';
+                }
                 isValid = false;
             }
             if (value) {
                 userFilters = userFilters.split(/\s/);
-                $.each(userFilters, function (i, d) {
-                    if (filters[d]) {
+                $.each(userFilters, function (i, uf) {
+                    if (filters[uf]) {
                         if (
-                            typeof filters[d].regex === 'function' && !filters[d].regex(userInput, value) || 
-                            filters[d].regex instanceof RegExp && !filters[d].regex.test(value)
+                            typeof filters[uf].regex === 'function' && !filters[uf].regex(userInput, value) || 
+                            filters[uf].regex instanceof RegExp && !filters[uf].regex.test(value)
                         ) {
                             isValid = false;
-                            error = userInput.error || filters[d].error;
+                            error = (userInput.errors && userInput.errors[uf]) || filters[uf].error;
                             return false;
                         }
                     }
@@ -171,19 +182,25 @@
                 value = $input.val() === $input.attr('placeholder') ? '' : $input.val(),
                 test = validate(userInput, value),
                 $error = $input.siblings('.error'),
-                $icon = $input.siblings('.valid-icon');
-            $input.removeClass('invalid');
-            $form.find('.error').add($icon).hide();
+                $invalid = $input.siblings('.invalid-icon'),
+                $valid = $input.siblings('.valid-icon');
+            $invalid.click(function(){
+                $input.trigger('focus');
+            });
+            $input.removeClass('invalid valid');
+            $form.find('.error').add($invalid).add($valid).hide();
             if (!test.isValid) {
                 $input.addClass('invalid');
+                $invalid.show();
                 $error.css({
                     right: -($error.outerWidth()),
                     top: $input.outerHeight() / 2
-                }).text(test.error).show();
+                }).html(test.error).show();
             }
             if (value && test.isValid) {
-                $error.hide();
-                $icon.show();
+                $input.addClass('valid');
+                $error.add($invalid).hide();
+                $valid.show();
             }            
         };
         
@@ -208,7 +225,7 @@
         }
         $inputs.each(function () {
             $(this).attr('autocomplete', 'off');
-            $('<span class="error"></span><i class="valid-icon"></i>').hide().insertAfter($(this));
+            $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
             analyze($(this));
         }).on('keyup focus blur', function () {
             analyze($(this));
