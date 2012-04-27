@@ -138,8 +138,6 @@
             var isValid = true,
                 error = '',
                 userFilters = userInput.filters;
-                
-                // console.log(userInput.errors);
             if (!value && /required/.test(userFilters)) {
                 if (userInput.errors && userInput.errors.required) {
                     error = userInput.errors.required;
