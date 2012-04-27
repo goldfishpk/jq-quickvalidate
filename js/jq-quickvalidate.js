@@ -183,9 +183,6 @@
                 $error = $input.parent().siblings('.error'),
                 $invalid = $input.siblings('.invalid-icon'),
                 $valid = $input.siblings('.valid-icon');
-            $invalid.click(function(){
-                $input.trigger('focus');
-            });
             $input.removeClass('invalid valid');
             $form.find('.error').add($invalid).add($valid).hide();
             if (!test.isValid) {
@@ -209,29 +206,44 @@
 -------------------------------------------------------- */
         
         var init = (function () {
-            $form.css('visibility', 'visible');
-            $inputs.each(function () {
-                $(this).attr('autocomplete', 'off');
-                $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
-                $(this).siblings().andSelf().not('label, .error').wrapAll('<span class="field" />');
-                analyze($(this));
-            }).on('keyup focus blur', function (e) {
-                analyze($(this), e.type);
-            }).blur();
+            $inputs
+                .each(function () {
+                    var $input = $(this),
+                        // Create markup for icons and error message
+                        $error = $('<span class="error">'),
+                        $valid = $('<i class="valid-icon">'),
+                        $invalid = $('<i/>', {
+                            'class': 'invalid-icon',
+                            click: function(){
+                                $input.trigger('focus');
+                            }
+                        });
+                    $input.attr('autocomplete', 'off');
+                    $error.add($invalid).add($valid).hide().insertAfter($(this));
+                    $input.siblings().andSelf().not('label, .error').wrapAll('<span class="field" />');
+                    analyze($(this));
+                })
+                // Events
+                .on('keyup focus blur', function (e) {
+                    analyze($(this), e.type);
+                })
+                .blur(); // Start fresh!
             
             // Placeholder support
             if (!('placeholder' in $('<input>')[0])) {
-                $inputs.each(function () {
-                    $(this).val($(this).attr('placeholder'));
-                }).on({
-                    focus: function () {
-                        this.value === $(this).attr('placeholder') && $(this).val('');
-                    },
-                    blur: function () {
-                        $(this).val() || $(this).val($(this).attr('placeholder'));
-                    }
-                });
-            }
+                $inputs
+                    .each(function () {
+                        $(this).val($(this).attr('placeholder'));
+                    })
+                    .on({
+                        focus: function () {
+                            this.value === $(this).attr('placeholder') && $(this).val('');
+                        },
+                        blur: function () {
+                            $(this).val() || $(this).val($(this).attr('placeholder'));
+                        }
+                    });
+                }
         }());
         
 /* --------------------------------------------------------
