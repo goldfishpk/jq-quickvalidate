@@ -20,6 +20,17 @@
         return keys;
     };
     
+    // Get maximum width of elements in collection
+    var getMaxWidth = function ($elms) {
+        var maxWidth = 0;
+        $elms.each(function () {
+            if ($(this).width() > maxWidth) {
+                maxWidth = $(this).width();
+            }
+        });
+        return maxWidth;
+    };
+    
     $.fn.quickValidate = function (ops) {
         // Default options
         var o = $.extend({
@@ -179,7 +190,7 @@
             var userInput = o.inputs[$input.attr('name')],
                 value = $input.val() === $input.attr('placeholder') ? '' : $input.val(),
                 test = validate(userInput, value),
-                $error = $input.siblings('.error'),
+                $error = $input.parent().siblings('.error'),
                 $invalid = $input.siblings('.invalid-icon'),
                 $valid = $input.siblings('.valid-icon');
             $invalid.click(function(){
@@ -190,10 +201,7 @@
             if (!test.isValid) {
                 $input.addClass('invalid');
                 $invalid.show();
-                $error.css({
-                    right: -($error.outerWidth()),
-                    top: $input.outerHeight() / 2
-                }).html(test.error).show();
+                $error.html(test.error).show();
             }
             if (value && test.isValid) {
                 $input.addClass('valid');
@@ -221,13 +229,19 @@
                 }
             });
         }
+
+        // Adjust labels
+        $form.find('label').width(getMaxWidth($form.find('label')));
+        
         $inputs.each(function () {
             $(this).attr('autocomplete', 'off');
             $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
+            $(this).siblings().andSelf().not('label, .error').wrapAll('<span class="field">');
             analyze($(this));
         }).on('keyup focus blur', function () {
             analyze($(this));
         }).blur();
+        
         $form.submit(function (e) {
             if ($form.find('input.invalid').length) {
                 e.preventDefault();
