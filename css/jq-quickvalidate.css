@@ -121,9 +121,6 @@
     display: block;
     padding-bottom: .3em;
   }
-  #my-form label:empty {
-    display: none;
-  }
   #my-form .error {
     position: inherit;
     display: inline-block;
