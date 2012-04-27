@@ -24,7 +24,7 @@
         // Default options
         var o = $.extend({
             inputs: {},
-            onSuccess: function () {
+            onSuccess: function (e) {
                 alert('Thank you...');
             },
             onFail: function () {
@@ -233,7 +233,7 @@
                 e.preventDefault();
                 o.onFail();
             } else {
-                o.onSuccess();
+                o.onSuccess(e);
             }
         });
         return this;
