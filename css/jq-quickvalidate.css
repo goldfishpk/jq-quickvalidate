@@ -70,10 +70,10 @@
   width: 16px;
 }
 #my-form .valid-icon {
-  background: url(../img/valid.png) no-repeat;
+background: url(http://i46.tinypic.com/28cmt7b.png) no-repeat;
 }
 #my-form .invalid-icon {
-  background: url(../img/invalid.png) no-repeat;
+background: url(http://i49.tinypic.com/15pswee.png) no-repeat;
   cursor: pointer;
 }
 #my-form input.invalid {
