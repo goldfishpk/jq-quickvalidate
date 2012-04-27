@@ -10,10 +10,14 @@
 
     User config:
     
+    * use same units
+    
 ------------------------------------------------------ */
 
-    @font-size: 15px;
-    @error-font-size: 12px;
+    @font-size: 100%;
+    @error-font-size: 80%;
+    @label-align: left;
+    @label-width: 80px;
     @input-width: 200px;
     @error-width: 150px;
     @icon-size: 16px;
@@ -54,7 +58,8 @@
     }
     label {
         padding-right: 1.7em;
-        text-align: right;
+        text-align: @label-align;
+        width: @label-width;
     }
     input[type="text"],
     input[type="password"],
@@ -96,6 +101,7 @@
         right: (@error-width + @icon-size + @icon-padding) * -1;
         margin-right: -20px; /* Same as arrow */
         top: 50%;
+        z-index: 999;
         padding: .8em 1.2em;
         font-size: @error-font-size;
         text-shadow: 1px 1px 0 rgba(0,0,0,.5);
@@ -118,7 +124,8 @@
         border-style: solid;
         border-width: 0 10px 10px 10px;
         border-color: transparent #313b53 transparent transparent;
-    }   
+    }    
+
     @media screen and (max-width: 480px) {
         label {
             text-align: left;
@@ -127,8 +134,10 @@
         }
         .error {
             position: inherit;
-            display: inline-block;
-            left: 0;
+            float: left;
+            clear: left;
+            right: 0;
+            margin-right: 0;
             top: 100%;
             margin-top: 4px;
             width: @input-width;

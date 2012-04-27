@@ -220,7 +220,7 @@
         
         var init = (function () {
             // Adjust labels
-            $form.find('label').width(getMaxWidth($form.find('label')));
+            //$form.find('label').width(getMaxWidth($form.find('label')));
             $form.css('visibility', 'visible');
 
             $inputs.each(function () {
