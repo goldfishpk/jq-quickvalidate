@@ -183,13 +183,18 @@
                 $error = $input.parent().siblings('.error'),
                 $invalid = $input.siblings('.invalid-icon'),
                 $valid = $input.siblings('.valid-icon');
+                
+            // Reset
             $input.removeClass('invalid valid');
-            $form.find('.error').add($invalid).add($valid).hide();
+            $error.add($invalid).add($valid).hide();
+            
+            // Invalid
             if (!test.isValid) {
                 $input.addClass('invalid');
                 $invalid.show();
                 evt !== 'blur' && $error.html(test.error).show(); // Keep hidden on blur
             }
+            // Valid
             if (value && test.isValid) {
                 $input.addClass('valid');
                 $error.add($invalid).hide();
