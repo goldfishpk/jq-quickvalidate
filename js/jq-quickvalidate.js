@@ -20,17 +20,6 @@
         return keys;
     };
     
-    // Get maximum width of elements in collection
-    var getMaxWidth = function ($elms) {
-        var maxWidth = 0;
-        $elms.each(function () {
-            if ($(this).width() > maxWidth) {
-                maxWidth = $(this).width();
-            }
-        });
-        return maxWidth;
-    };
-    
     $.fn.quickValidate = function (ops) {
         // Default options
         var o = $.extend({
@@ -219,10 +208,7 @@
 -------------------------------------------------------- */
         
         var init = (function () {
-            // Adjust labels
-            //$form.find('label').width(getMaxWidth($form.find('label')));
             $form.css('visibility', 'visible');
-
             $inputs.each(function () {
                 $(this).attr('autocomplete', 'off');
                 $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
