@@ -175,7 +175,8 @@
 
 -------------------------------------------------------- */
 
-        var analyze = function ($input) {
+        var analyze = function ($input, evt) {
+            evt = evt || '';
             var userInput = o.inputs[$input.attr('name')],
                 value = $input.val() === $input.attr('placeholder') ? '' : $input.val(),
                 test = validate(userInput, value),
@@ -190,7 +191,7 @@
             if (!test.isValid) {
                 $input.addClass('invalid');
                 $invalid.show();
-                $error.html(test.error).show();
+                evt !== 'blur' && $error.html(test.error).show(); // Keep hidden on blur
             }
             if (value && test.isValid) {
                 $input.addClass('valid');
@@ -214,8 +215,8 @@
                 $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
                 $(this).siblings().andSelf().not('label, .error').wrapAll('<span class="field" />');
                 analyze($(this));
-            }).on('keyup focus blur', function () {
-                analyze($(this));
+            }).on('keyup focus blur', function (e) {
+                analyze($(this), e.type);
             }).blur();
             
             // Placeholder support
