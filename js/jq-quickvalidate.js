@@ -208,8 +208,8 @@
                 .each(function () {
                     var $input = $(this),
                         // Create markup for icons and error message
-                        $error = $('<span class="error">'),
-                        $valid = $('<i class="valid-icon">'),
+                        $error = $('<span class="error" />'),
+                        $valid = $('<i class="valid-icon" />'),
                         $invalid = $('<i/>', {
                             'class': 'invalid-icon',
                             click: function(){
