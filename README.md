@@ -2,6 +2,9 @@
 
 A small & extensible jQuery validation plugin.
 
+**NEW** : Check out the [testing](https://github.com/elclanrs/jq-quickvalidate/tree/testing) branch, lots of new features and improvements. 
+**Demo(testing)**: [jsfiddle](http://jsfiddle.net/elclanrs/BMz9U/embedded/result/)
+
 **Demo:** [jsfiddle](http://jsfiddle.net/elclanrs/ZsS2D/embedded/result/)  
 **Tested:** IE8+, Webkit, Firefox 3.6+, Opera 11+
 
