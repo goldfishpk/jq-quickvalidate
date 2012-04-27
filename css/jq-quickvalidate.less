@@ -1,0 +1,151 @@
+/* --------------------------------------------------------
+
+    jq-quickvalidate 1.1
+    
+    * Author: Cedric Ruiz
+    * License: GPLv2
+    * Website: https://github.com/elclanrs/jq-quickvalidate
+    
+------------------------------------------------------ *//*
+
+    User config:
+    
+------------------------------------------------------ */
+
+    @font-size: 15px;
+    @error-font-size: 12px;
+    @input-width: 200px;
+    @error-width: 150px;
+    @icon-size: 16px;
+    @icon-padding: 5px;
+
+/*---------------------------------------------------- *//*
+
+    Careful! ...
+    
+-------------------------------------------------------*//*
+
+    Mixins:
+
+------------------------------------------------------ */
+
+.boxsizing {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/*------------------------------------------------------ */
+
+#my-form {
+    visibility: hidden;
+    font-size: @font-size;
+    p {
+        float: left;
+        clear: both;
+        position: relative;
+        margin: .5em 0;
+    }
+    label, 
+    input,
+    .field { 
+        display: inline-block;
+        position: relative;
+    }
+    label {
+        padding-right: 1.7em;
+        text-align: right;
+    }
+    input[type="text"],
+    input[type="password"],
+    textarea {
+        .boxsizing;
+        padding: .3em;
+        width: @input-width;
+        border: 1px solid #ccc;
+        outline: 0;
+    }
+    .valid-icon,
+    .invalid-icon {
+        position: absolute;
+        top: 50%;
+        margin-top: -8px;
+        right: @icon-size * -1.5;
+        height: @icon-size;
+        width: @icon-size;
+    }
+    .valid-icon {
+        background: url(../img/valid.png) no-repeat;
+    }
+    .invalid-icon {
+        background: url(../img/invalid.png) no-repeat;
+        cursor: pointer;
+    }
+    input.invalid {
+        background: #FFFAC4;
+        color: #3B392A;
+    }
+    input.valid {
+        background: #E9F7D7;
+        color: #3A5911;
+    }
+    .error {
+        .boxsizing;
+        position: absolute;
+        width: @error-width;
+        right: (@error-width + @icon-size + @icon-padding) * -1;
+        margin-right: -20px; /* Same as arrow */
+        top: 50%;
+        padding: .8em 1.2em;
+        font-size: @error-font-size;
+        text-shadow: 1px 1px 0 rgba(0,0,0,.5);
+        background: #313b53;
+        background: -moz-linear-gradient(top, #313b53 0%, #4b5469 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#313b53), color-stop(100%,#4b5469));
+        background: -webkit-linear-gradient(top, #313b53 0%,#4b5469 100%);
+        background: -o-linear-gradient(top, #313b53 0%,#4b5469 100%);
+        background: -ms-linear-gradient(top, #313b53 0%,#4b5469 100%);
+        background: linear-gradient(top, #313b53 0%,#4b5469 100%);
+        color: white;
+        border-bottom: 1px solid #313b53;
+        box-shadow: 0 1px 1px rgba(0,0,0,.3);
+    }
+    .error:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -20px;
+        border-style: solid;
+        border-width: 0 10px 10px 10px;
+        border-color: transparent #313b53 transparent transparent;
+    }   
+    @media screen and (max-width: 480px) {
+        label {
+            text-align: left;
+            display: block;
+            padding-bottom: .3em;
+        }
+        label:empty {
+            display: none;
+        }
+        .error {
+            position: inherit;
+            display: inline-block;
+            left: 0;
+            top: 100%;
+            margin-top: 4px;
+            width: @input-width;
+        }
+        .error:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            margin-top: -16px;
+            left: 50%;
+            margin-left: -8px;
+            border-style: solid;
+            border-width: 8px 8px 8px 8px;
+            border-color: transparent transparent #313b53 transparent;
+        }
+    }    
+}
