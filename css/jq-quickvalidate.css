@@ -6,118 +6,141 @@
     * License: GPLv2
     * Website: https://github.com/elclanrs/jq-quickvalidate
     
--------------------------------------------------------- */
+------------------------------------------------------ *//*
 
+    User config:
+    
+------------------------------------------------------ */
+/*---------------------------------------------------- *//*
+
+    Careful! ...
+    
+-------------------------------------------------------*//*
+
+    Mixins:
+
+------------------------------------------------------ */
+.boxsizing {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/*------------------------------------------------------ */
+#my-form {
+  visibility: hidden;
+  font-size: 15px;
+}
 #my-form p {
-    float: left;
-    clear: both;
-    position: relative;
-    margin: .5em 0;
+  float: left;
+  clear: both;
+  position: relative;
+  margin: .5em 0;
 }
-#my-form .field {
-    position: relative;
-}
-#my-form label, 
+#my-form label,
 #my-form input,
-#my-form .field { 
-    display: inline-block;
+#my-form .field {
+  display: inline-block;
+  position: relative;
 }
 #my-form label {
-    padding-right: 1.7em;
-    text-align: right;
-}
-#my-form label span { 
-    color: red; 
+  padding-right: 1.7em;
+  text-align: right;
 }
 #my-form input[type="text"],
 #my-form input[type="password"],
 #my-form textarea {
-    padding: 0 .3em;
-    height: 1.7em;
-    line-height: 24px;
-    width: 200px;
-    border: 1px solid #ccc;
-    outline: 0;
-    box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .3em;
+  width: 200px;
+  border: 1px solid #ccc;
+  outline: 0;
 }
 #my-form .valid-icon,
 #my-form .invalid-icon {
-    position: absolute;
-    top: 50%;
-    margin-top: -8px;
-    right: -24px;
-    height: 16px;
-    width: 16px;
+  position: absolute;
+  top: 50%;
+  margin-top: -8px;
+  right: -24px;
+  height: 16px;
+  width: 16px;
 }
 #my-form .valid-icon {
-    background: url(../img/valid.png) no-repeat;
+  background: url(../img/valid.png) no-repeat;
 }
 #my-form .invalid-icon {
-    background: url(../img/invalid.png) no-repeat;
-    cursor: pointer;
+  background: url(../img/invalid.png) no-repeat;
+  cursor: pointer;
 }
 #my-form input.invalid {
-    background: #FFFAC4;
-    color: #3B392A;
+  background: #FFFAC4;
+  color: #3B392A;
 }
 #my-form input.valid {
-    background: #E9F7D7;
-    color: #3A5911;
+  background: #E9F7D7;
+  color: #3A5911;
 }
 #my-form .error {
-    position: absolute;
-    box-sizing: border-box;
-    width: 150px;
-    right: -150px;
-    top: 50%;
-    margin-right: -40px;
-    padding: .8em 1.2em;
-    font-size: 12px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,.5);
-    background: #313b53;
-    background: -moz-linear-gradient(top, #313b53 0%, #4b5469 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#313b53), color-stop(100%,#4b5469));
-    background: -webkit-linear-gradient(top, #313b53 0%,#4b5469 100%);
-    background: -o-linear-gradient(top, #313b53 0%,#4b5469 100%);
-    background: -ms-linear-gradient(top, #313b53 0%,#4b5469 100%);
-    background: linear-gradient(top, #313b53 0%,#4b5469 100%);
-    color: white;
-    border-bottom: 1px solid #313b53;
-    box-shadow: 0 1px 1px rgba(0,0,0,.3);
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  width: 150px;
+  right: -171px;
+  margin-right: -20px;
+  /* Same as arrow */
+
+  top: 50%;
+  padding: .8em 1.2em;
+  font-size: 12px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  background: #313b53;
+  background: -moz-linear-gradient(top, #313b53 0%, #4b5469 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #313b53), color-stop(100%, #4b5469));
+  background: -webkit-linear-gradient(top, #313b53 0%, #4b5469 100%);
+  background: -o-linear-gradient(top, #313b53 0%, #4b5469 100%);
+  background: -ms-linear-gradient(top, #313b53 0%, #4b5469 100%);
+  background: linear-gradient(top, #313b53 0%, #4b5469 100%);
+  color: white;
+  border-bottom: 1px solid #313b53;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 #my-form .error:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -20px;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+  border-color: transparent #313b53 transparent transparent;
+}
+@media screen and (max-width: 480px) {
+  #my-form label {
+    text-align: left;
+    display: block;
+    padding-bottom: .3em;
+  }
+  #my-form label:empty {
+    display: none;
+  }
+  #my-form .error {
+    position: inherit;
+    display: inline-block;
+    left: 0;
+    top: 100%;
+    margin-top: 4px;
+    width: 200px;
+  }
+  #my-form .error:after {
     content: "";
     position: absolute;
     top: 0;
-    left: -20px;
+    margin-top: -16px;
+    left: 50%;
+    margin-left: -8px;
     border-style: solid;
-    border-width: 0 10px 10px 10px;
-    border-color: transparent #313b53 transparent transparent;
-}
-
-@media screen and (max-width: 480px) {
-    #my-form label {
-        text-align: left;
-        display: block;
-        padding-bottom: .3em;
-    }
-    #my-form .error {
-        position: inherit;
-        display: inline-block;
-        left: 0;
-        top: 100%;
-        margin-top: 4px;
-        width: 200px;
-    }
-    #my-form .error:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        margin-top: -16px;
-        left: 50%;
-        margin-left: -8px;
-        border-style: solid;
-        border-width: 8px 8px 8px 8px;
-        border-color: transparent transparent #313b53 transparent;
-    }
+    border-width: 8px 8px 8px 8px;
+    border-color: transparent transparent #313b53 transparent;
+  }
 }

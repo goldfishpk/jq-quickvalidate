@@ -138,7 +138,7 @@
         
 /* --------------------------------------------------------
 
-    Validate(data, value):
+    Validate (data, value):
 
     * userInput: object containing user defined input properties
     * value: the value of the given input
@@ -212,36 +212,47 @@
         
 /* --------------------------------------------------------
 
-    Events:
+    Init:
+    
+    * adjust labels width, bind events and append errors
+
+-------------------------------------------------------- */
+        
+        var init = (function () {
+            // Adjust labels
+            $form.find('label').width(getMaxWidth($form.find('label')));
+            $form.css('visibility', 'visible');
+
+            $inputs.each(function () {
+                $(this).attr('autocomplete', 'off');
+                $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
+                $(this).siblings().andSelf().not('label, .error').wrapAll('<span class="field" />');
+                analyze($(this));
+            }).on('keyup focus blur', function () {
+                analyze($(this));
+            }).blur();
+            
+            // Placeholder support
+            if (!('placeholder' in $('<input>')[0])) {
+                $inputs.each(function () {
+                    $(this).val($(this).attr('placeholder'));
+                }).on({
+                    focus: function () {
+                        this.value === $(this).attr('placeholder') && $(this).val('');
+                    },
+                    blur: function () {
+                        $(this).val() || $(this).val($(this).attr('placeholder'));
+                    }
+                });
+            }
+        }());
+        
+/* --------------------------------------------------------
+
+    Submit:
 
 -------------------------------------------------------- */
 
-        // Placeholder support
-        if (!('placeholder' in $('<input>')[0])) {
-            $inputs.each(function () {
-                $(this).val($(this).attr('placeholder'));
-            }).on({
-                focus: function () {
-                    this.value === $(this).attr('placeholder') && $(this).val('');
-                },
-                blur: function () {
-                    $(this).val() || $(this).val($(this).attr('placeholder'));
-                }
-            });
-        }
-
-        // Adjust labels
-        $form.find('label').width(getMaxWidth($form.find('label')));
-        
-        $inputs.each(function () {
-            $(this).attr('autocomplete', 'off');
-            $('<span class="error"></span><i class="invalid-icon"></i><i class="valid-icon"></i>').hide().insertAfter($(this));
-            $(this).siblings().andSelf().not('label, .error').wrapAll('<span class="field">');
-            analyze($(this));
-        }).on('keyup focus blur', function () {
-            analyze($(this));
-        }).blur();
-        
         $form.submit(function (e) {
             if ($form.find('input.invalid').length) {
                 e.preventDefault();
@@ -250,6 +261,8 @@
                 o.onSuccess(e);
             }
         });
+        
         return this;
+        
     };
 }(jQuery));
