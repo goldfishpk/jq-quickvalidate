@@ -1,66 +1,86 @@
 /* --------------------------------------------------------
 
     jq-quickvalidate 1.2
-    
+
     * Author: Cedric Ruiz
     * License: GPLv2
     * Website: https://github.com/elclanrs/jq-quickvalidate
-    
------------------------------------------------------- *//*
 
-    User config:
+/* ----------------------------------------------------- */
+/* ##################################################### *//* #############    User config:    #################### *//* ##################################################### *//* --------------------------------------------------------
+
+    Dimensions:
     
     * use same units
-    
------------------------------------------------------- */
-/*---------------------------------------------------- *//*
 
-    Careful! ...
-    
--------------------------------------------------------*//*
+/*------------------------------------------------------ */
+/*--------------------------------------------------------
+
+    Theme:
+
+------------------------------------------------------- */
+/*--------------------------------------------------------
+
+    Extra:
+
+------------------------------------------------------- */
+/*--------------------------------------------------------
+/* #################################################### *//* ##############    end user config    ############### *//* #################################################### *//*--------------------------------------------------------
+
+    Careful from here on...
+
+    jQuery data:
+
+------------------------------------------------------- */
+.qval-field-width {
+  width: 407px;
+}
+/*--------------------------------------------------------
 
     Mixins:
 
------------------------------------------------------- */
-.boxsizing {
+------------------------------------------------------- */
+/*---------------------------------------------------- */
+* {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-/*------------------------------------------------------ */
-#my-form {
-  font-size: 100%;
+.qval-form {
+  font-size: 15px;
+  /* ----------------------------------------------------
+
+    Responsive
+
+------------------------------------------------------ */
+
 }
-#my-form p {
+.qval-form p {
   float: left;
   clear: both;
   position: relative;
   margin: .5em 0;
 }
-#my-form label,
-#my-form input,
-#my-form .field {
-  display: inline-block;
+.qval-form label,
+.qval-form input,
+.qval-form .field {
+  float: left;
   position: relative;
 }
-#my-form label {
+.qval-form label {
   padding-right: 1.7em;
   text-align: left;
-  width: 5em;
 }
-#my-form input[type="text"],
-#my-form input[type="password"],
-#my-form textarea {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+.qval-form input[type="text"],
+.qval-form input[type="password"],
+.qval-form textarea {
   padding: .3em;
-  width: 200px;
+  width: 225px;
   border: 1px solid #ccc;
   outline: 0;
 }
-#my-form .valid-icon,
-#my-form .invalid-icon {
+.qval-form .valid-icon,
+.qval-form .invalid-icon {
   position: absolute;
   top: 50%;
   margin-top: -8px;
@@ -68,81 +88,105 @@
   height: 16px;
   width: 16px;
 }
-#my-form .valid-icon {
-  background: url(../img/valid.png) no-repeat;
+.qval-form textarea ~ .valid-icon,
+.qval-form textarea ~ .invalid-icon {
+  top: 7.5px;
+  /* Aproximation */
+
+  margin-top: 0;
 }
-#my-form .invalid-icon {
-  background: url(../img/invalid.png) no-repeat;
+.qval-form .valid-icon {
+  background: url("../img/valid.png") no-repeat;
+}
+.qval-form .invalid-icon {
+  background: url("../img/invalid.png") no-repeat;
   cursor: pointer;
 }
-#my-form input.invalid {
-  background: #FFFAC4;
-  color: #3B392A;
+.qval-form input.invalid {
+  background: #fffbd4;
+  color: #3b3600;
+  border: 1px solid #d4c000;
 }
-#my-form input.valid {
-  background: #E9F7D7;
-  color: #3A5911;
+.qval-form input.valid {
+  background: #edfcd9;
+  color: #223904;
+  border: 1px solid #78c610;
 }
-#my-form .error {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+.qval-form .error {
   position: absolute;
   width: 150px;
-  right: -171px;
-  margin-right: -20px;
-  /* Same as arrow */
+  right: -182px;
+  margin-right: -10px;
+  /* Same as arrow border-width */
 
-  top: 50%;
+  top: 15px;
   z-index: 999;
   padding: .8em 1.2em;
   font-size: 80%;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-  background: #313b53;
-  background: -moz-linear-gradient(top, #313b53 0%, #4b5469 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #313b53), color-stop(100%, #4b5469));
-  background: -webkit-linear-gradient(top, #313b53 0%, #4b5469 100%);
-  background: -o-linear-gradient(top, #313b53 0%, #4b5469 100%);
-  background: -ms-linear-gradient(top, #313b53 0%, #4b5469 100%);
-  background: linear-gradient(top, #313b53 0%, #4b5469 100%);
+  background: #183e59;
+  background: -webkit-gradient(linear, left top, left bottom, from(#183e59), to(#235a81));
+  background: -moz-linear-gradient(center top, #183e59 0%, #235a81 100%);
+  background: -moz-gradient(center top, #183e59 0%, #235a81 100%);
   color: white;
-  border-bottom: 1px solid #313b53;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #183e59;
+  -webkit-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
 }
-#my-form .error:after {
+.qval-form .error:after {
   content: "";
   position: absolute;
   top: 0;
-  left: -20px;
+  left: -19.42857142857143px;
+  /* `-1` to fix gap */
+
   border-style: solid;
-  border-width: 0 10px 10px 10px;
-  border-color: transparent #313b53 transparent transparent;
+  border-width: 0 10.714285714285715px 10.714285714285715px 10.714285714285715px;
+  border-color: transparent #183e59 transparent transparent;
 }
-@media screen and (max-width: 480px) {
-  #my-form label {
-    text-align: left;
-    display: block;
-    padding-bottom: .3em;
-  }
-  #my-form .error {
-    position: inherit;
-    float: left;
-    clear: left;
-    right: 0;
-    margin-right: 0;
-    top: 100%;
-    margin-top: 4px;
-    width: 200px;
-  }
-  #my-form .error:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    margin-top: -16px;
-    left: 50%;
-    margin-left: -8px;
-    border-style: solid;
-    border-width: 8px 8px 8px 8px;
-    border-color: transparent transparent #313b53 transparent;
-  }
+.qval-form.stack .field,
+.qval-form.stack .error {
+  width: 87.54863813229572%;
+}
+.qval-form.stack p,
+.qval-form.stack input[type="text"],
+.qval-form.stack input[type="password"],
+.qval-form.stack textarea {
+  width: 100%;
+  max-width: 337.5px;
+}
+.qval-form.stack label {
+  text-align: left;
+  padding-bottom: .3em;
+}
+.qval-form.stack .error {
+  position: inherit;
+  float: left;
+  clear: left;
+  right: 0;
+  margin-right: 0;
+  top: 100%;
+  margin-top: 4px;
+}
+.qval-form.stack .error:after {
+  /* IE8 hack force refresh */
+
+  content: ".";
+  line-height: 0;
+  text-indent: -9999px;
+  /**/
+
+  position: absolute;
+  top: 0;
+  margin-top: -16px;
+  left: 50%;
+  margin-left: -8px;
+  border-style: solid;
+  border-width: 8px 8px 8px 8px;
+  border-color: transparent transparent #183e59 transparent;
+}
+.qval-form.stack .valid-icon,
+.qval-form.stack .invalid-icon {
+  float: right;
 }

@@ -5,23 +5,23 @@
 <meta charset="utf-8"/>
 <title>jq-quickvalidate</title>
 <link href="css/normalize.css" rel="stylesheet"/>
+<link href="css/1140.css" rel="stylesheet"/>
 <link href="css/jq-quickvalidate.css" rel="stylesheet" media="screen"/>
 <link href="css/styles.css" rel="stylesheet" media="screen"/>
 </head>
 <body>
 
-<h1>QuickValidate:</h1>
-<h2>A small and extensible jQuery validation plugin</h2>
+    <form id="my-form">
+        <p><label>Username:</label><input name="username" type="text"/></p>
+        <p><label>Password:</label><input name="pass" type="password"/></p>
+        <p><label>E-Mail:</label><input name="email" type="text"/></p>
+        <p><label>Date:</label><input name="date" type="text" placeholder="mm/dd/yy"/></p>
+        <p><label>Comments:</label><textarea name="comments"></textarea></p>
+        <p><label>&nbsp;</label><button type="submit">Submit</button><button type="reset">Reset</button></p>
+        <div style="clear: both;"></div>
+    </form>
 
-<form id="my-form">
-    <p><label>Username:</label><input name="username" type="text"/></p>
-    <p><label>Password:</label><input name="pass" type="password"/></p>
-    <p><label>E-Mail:</label><input name="email" type="text"/></p>
-    <p><label>Date:</label><input name="date" type="text" placeholder="mm/dd/yy"/></p>
-    <p><label>Random:</label><input name="random" type="text"/></p>
-    <p><label></label><button type="submit">Submit</button></p>
-    <div style="clear: both;"></div>
-</form>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="js/jq-quickvalidate.js"></script>
@@ -46,7 +46,7 @@
             'date': {
                 filters: 'date'
             },
-            'random': {
+            'comments': {
                 filters: 'digits'
             }
         }

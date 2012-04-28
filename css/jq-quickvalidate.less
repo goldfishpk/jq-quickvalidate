@@ -1,47 +1,93 @@
 /* --------------------------------------------------------
 
     jq-quickvalidate 1.2
-    
+
     * Author: Cedric Ruiz
     * License: GPLv2
     * Website: https://github.com/elclanrs/jq-quickvalidate
-    
------------------------------------------------------- *//*
 
-    User config:
+/* ----------------------------------------------------- */
+/* ##################################################### */    
+/* #############    User config:    #################### */    
+/* ##################################################### */     
+/* --------------------------------------------------------
+
+    Dimensions:
     
     * use same units
-    
------------------------------------------------------- */
 
-    @font-size: 100%;
-    @error-font-size: 80%;
+/*------------------------------------------------------ */
+
+    @font-size: 15px;
     @label-align: left;
-    @label-width: 5em;
-    @input-width: 200px;
-    @error-width: 150px;
+    @field-width: @font-size * 15;
     @icon-size: 16px;
-    @icon-padding: 5px;
 
-/*---------------------------------------------------- *//*
+/*--------------------------------------------------------
 
-    Careful! ...
+    Theme:
+
+------------------------------------------------------- */
     
--------------------------------------------------------*//*
+    @error-color: #183E59;
+    @invalid: #FFFBD4;
+    @valid: #EDFCD9;
+    @valid-icon: "../img/valid.png";
+    @invalid-icon: "../img/invalid.png"; 
+    
+/*--------------------------------------------------------
+
+    Extra:
+
+------------------------------------------------------- */
+
+    @error-width: @field-width / 1.5;
+    @error-font-size: 80%;
+    @icon-padding: @icon-size/2;
+    
+/*--------------------------------------------------------
+/* #################################################### */    
+/* ##############    end user config    ############### */    
+/* #################################################### */          
+/*--------------------------------------------------------
+
+    Careful from here on...
+
+    jQuery data:
+
+------------------------------------------------------- */
+
+    .qval-field-width {
+        width: @field-width + @error-width + @icon-size + (@icon-padding * 2);
+    }
+
+/*--------------------------------------------------------
 
     Mixins:
 
------------------------------------------------------- */
+------------------------------------------------------- */
 
-.boxsizing {
+.gradient (@start: #000, @stop: #FFF) {
+    background: @start;
+    background: -webkit-gradient(linear, left top, left bottom, from(@start), to(@stop));
+    background: -moz-linear-gradient(center top, @start 0%, @stop 100%);
+    background: -moz-gradient(center top, @start 0%, @stop 100%);
+}
+.box-shadow (@string) {
+	-webkit-box-shadow: @string;
+	-moz-box-shadow: @string;
+	box-shadow: @string;
+}
+
+/*---------------------------------------------------- */
+
+* {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-/*------------------------------------------------------ */
-
-#my-form {
+.qval-form {
     font-size: @font-size;
     p {
         float: left;
@@ -49,23 +95,21 @@
         position: relative;
         margin: .5em 0;
     }
-    label, 
+    label,
     input,
-    .field { 
-        display: inline-block;
+    .field {
+        float: left;
         position: relative;
     }
     label {
         padding-right: 1.7em;
         text-align: @label-align;
-        width: @label-width;
     }
     input[type="text"],
     input[type="password"],
     textarea {
-        .boxsizing;
         padding: .3em;
-        width: @input-width;
+        width: @field-width;
         border: 1px solid #ccc;
         outline: 0;
     }
@@ -73,62 +117,82 @@
     .invalid-icon {
         position: absolute;
         top: 50%;
-        margin-top: -8px;
-        right: @icon-size * -1.5;
+        margin-top: -@icon-size/2;
+        right: -(@icon-size + @icon-padding);
         height: @icon-size;
         width: @icon-size;
     }
+    textarea ~ .valid-icon,
+    textarea ~ .invalid-icon {
+        top: @font-size / 2; /* Aproximation */
+        margin-top: 0;
+    }
     .valid-icon {
-        background: url(../img/valid.png) no-repeat;
+        background: url(@valid-icon) no-repeat;
     }
     .invalid-icon {
-        background: url(../img/invalid.png) no-repeat;
+        background: url(@invalid-icon) no-repeat;
         cursor: pointer;
     }
     input.invalid {
-        background: #FFFAC4;
-        color: #3B392A;
+        background: @invalid;
+        color: darken(@invalid, 80%);
+        border: 1px solid darken(@invalid, 50%);
     }
     input.valid {
-        background: #E9F7D7;
-        color: #3A5911;
+        background: @valid;
+        color: darken(@valid, 80%);
+        border: 1px solid darken(@valid, 50%);
     }
     .error {
-        .boxsizing;
         position: absolute;
         width: @error-width;
-        right: (@error-width + @icon-size + @icon-padding) * -1;
-        margin-right: -20px; /* Same as arrow */
-        top: 50%;
+        right: -(@error-width + @icon-size + (@icon-padding * 2));
+        margin-right: -10px; /* Same as arrow border-width */
+        top: @font-size;
         z-index: 999;
         padding: .8em 1.2em;
         font-size: @error-font-size;
         text-shadow: 1px 1px 0 rgba(0,0,0,.5);
-        background: #313b53;
-        background: -moz-linear-gradient(top, #313b53 0%, #4b5469 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#313b53), color-stop(100%,#4b5469));
-        background: -webkit-linear-gradient(top, #313b53 0%,#4b5469 100%);
-        background: -o-linear-gradient(top, #313b53 0%,#4b5469 100%);
-        background: -ms-linear-gradient(top, #313b53 0%,#4b5469 100%);
-        background: linear-gradient(top, #313b53 0%,#4b5469 100%);
+        .gradient(@error-color, lighten(@error-color, 10%));
         color: white;
-        border-bottom: 1px solid #313b53;
-        box-shadow: 0 1px 1px rgba(0,0,0,.3);
+        border-bottom: 1px solid @error-color;
+        .box-shadow(0px 1px 1px rgba(0,0,0,0.3));
     }
     .error:after {
+        @size: (@font-size/1.4);
         content: "";
         position: absolute;
         top: 0;
-        left: -20px;
+        left: -((@size - 1) * 2); /* `-1` to fix gap */
         border-style: solid;
-        border-width: 0 10px 10px 10px;
-        border-color: transparent #313b53 transparent transparent;
-    }    
+        border-width: 0 @size @size @size;
+        border-color: transparent @error-color transparent transparent;
+    }
 
-    @media screen and (max-width: 480px) {
+/* ----------------------------------------------------
+
+    Responsive
+
+------------------------------------------------------ */
+
+    &.stack {
+        .field,
+        .error {
+            @total: (@field-width + @icon-size + (@icon-padding * 2));
+            @icon: @icon-size + (@icon-padding * 2);
+            @percent:  (@icon / @total) * 100;
+            width: 100% - @percent
+        }
+        p,
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            max-width: @field-width * 1.5;
+        }
         label {
             text-align: left;
-            display: block;
             padding-bottom: .3em;
         }
         .error {
@@ -139,10 +203,13 @@
             margin-right: 0;
             top: 100%;
             margin-top: 4px;
-            width: @input-width;
         }
         .error:after {
-            content: "";
+            /* IE8 hack force refresh */
+            content: ".";
+            line-height: 0;
+            text-indent: -9999px;
+            /**/
             position: absolute;
             top: 0;
             margin-top: -16px;
@@ -150,7 +217,12 @@
             margin-left: -8px;
             border-style: solid;
             border-width: 8px 8px 8px 8px;
-            border-color: transparent transparent #313b53 transparent;
+            border-color: transparent transparent @error-color transparent;
         }
-    }    
+        .valid-icon,
+        .invalid-icon {
+            float: right;
+        }
+    }
+
 }
